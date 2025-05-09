@@ -1,0 +1,23 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-g",
+      "-Wall",
+      "-Wextra",
+      "-Wvla",
+      "-pedantic",
+      "-fsanitize=address,undefined",
+      "-pthread",
+      "-Werror",
+      "-Isrc/headers",
+      "-c",
+      "-o",
+      "build/obj/neural_network.o",
+      "src/neural_network.c"
+    ],
+    "directory": "/home/thanatos/C/NEAT",
+    "file": "/home/thanatos/C/NEAT/src/neural_network.c",
+    "output": "/home/thanatos/C/NEAT/build/obj/neural_network.o"
+  }
+]
