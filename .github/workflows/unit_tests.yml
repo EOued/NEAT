@@ -14,8 +14,10 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y make
-    - name: Run tests
+    - name: Compiling
       run: make clean && make test=1
+    - name: Run tests
+      run: build/target/./nn      
     - name: Check unit test results
       id: check_test_result
       run: |
