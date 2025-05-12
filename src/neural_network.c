@@ -3,6 +3,8 @@
 #include "testing.h"
 #include "utils.h"
 
+#include <time.h>
+
 nn* createEmpty(unsigned int input_n, unsigned int output_n)
 {
   nn* network;
@@ -55,10 +57,10 @@ void addConnection(nn* nn, connection connection)
   ERRCHK(outputLayer = findLayer(nn, connection.output));
   if (inputLayer >= outputLayer) ERR("inputLayer >= outputLayer");
 
-  nn->connections_n++;
   REALLOC(nn->connections_n, nn->connections_c, sizeof(connection),
           nn->connections);
-  nn->connections[nn->connections_n] = connection;
+  nn->connections[nn->connections_n++] = connection;
+  return;
 }
 
 void freeNN(nn* nn)
@@ -77,12 +79,13 @@ void freeNN(nn* nn)
 
 int main(void)
 {
+  srand(time(NULL));
 #ifdef TEST
   nn_testing_init();
-#endif
-
+#else
   nn* nn = createEmpty(3, 2);
   addConnection(nn, (connection){2, 3, 1});
   freeNN(nn);
+#endif
   return 0;
 }

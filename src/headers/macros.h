@@ -22,7 +22,7 @@
 
 #define REALLOC(size, capacity, size_t, ptr)                                   \
   do {                                                                         \
-    if (capacity < size)                                                       \
+    if (capacity <= size)                                                       \
     {                                                                          \
       if (!capacity) capacity = 2;                                             \
       else                                                                     \

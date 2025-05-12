@@ -28,6 +28,8 @@ typedef struct {
 } nn;
 
 nn* createEmpty(unsigned int input_n, unsigned int output_n);
+void addConnection(nn* nn, connection connection);
+int findLayer(nn* nn, unsigned int node);
 void freeNN(nn* nn);
 
 #endif
