@@ -6,7 +6,7 @@
 
 #define ERR(msg)                                                               \
   do {                                                                         \
-    perror(#msg);                                                              \
+    fprintf(stderr, #msg);                                                          \
     exit(1);                                                                   \
   } while (0)
 

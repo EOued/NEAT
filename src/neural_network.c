@@ -54,8 +54,29 @@ void addConnection(nn* nn, connection connection)
   if (inputLayer >= outputLayer) ERR("inputLayer >= outputLayer");
 
   nn->connections_n++;
-  REALLOC(nn->connections_n, nn->connections_c, sizeof(connection), nn->connections);
+  REALLOC(nn->connections_n, nn->connections_c, sizeof(connection),
+          nn->connections);
   nn->connections[nn->connections_n] = connection;
 }
 
-int main(void) { return 0; }
+void freeNN(nn* nn)
+{
+  if (!nn) return;
+  if (nn->layers)
+  {
+    for (unsigned int i = 0; i < nn->layers_n; i++)
+      if (nn->layers[i].ids) free(nn->layers[i].ids);
+    free(nn->layers);
+  }
+  if (nn->connections) free(nn->connections);
+  free(nn);
+  return;
+}
+
+int main(void)
+{
+  nn* nn = createEmpty(3, 2);
+  addConnection(nn, (connection){2, 3, 1});
+  freeNN(nn);
+  return 0;
+}

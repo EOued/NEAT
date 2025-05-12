@@ -1,10 +1,14 @@
-CFILES = neural_network.c
+CFILES = \
+	neural_network.c\
+	utils.c\
+	testing/unit_nn.c
 
 SRCDIR = src
 SOURCES = $(foreach file, $(CFILES), $(SRCDIR)/$(file))
 OBJDIR = build/obj
 INCLUDE = -I$(SRCDIR)/headers
 OFILES = $(CFILES:.c=.o)
+SUBDIRS = testing
 TARGETS = $(foreach file, $(OFILES), $(OBJDIR)/$(file))
 EXECDIR = build/target
 EXECNAME = nn
@@ -24,6 +28,7 @@ endif
 
 $(shell mkdir -p $(OBJDIR))
 $(shell mkdir -p $(EXECDIR))
+$(foreach dir, $(SUBDIRS), $(shell mkdir -p $(OBJDIR)/$(dir)))
 
 # Rule to generate object files from source files
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
