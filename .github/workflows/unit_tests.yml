@@ -2,12 +2,8 @@ name: Update Badge Based on Unit Test
 
 on:
   push:
-    paths:
-      - "unit_test"
-  pull_request:
-    paths:
-      - "unit_test"
-
+    branches:
+      - neat
 jobs:
   update-badge:
     runs-on: ubuntu-latest
