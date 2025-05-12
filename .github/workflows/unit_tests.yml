@@ -3,7 +3,7 @@ name: Update Badge Based on Unit Test
 on:
   push:
     paths:
-      - "unit_test"  # Path to the file you're monitoring
+      - "unit_test"
   pull_request:
     paths:
       - "unit_test"
