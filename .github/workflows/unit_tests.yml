@@ -12,41 +12,34 @@ jobs:
   update-badge:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-	uses: actions/checkout@v2
-
-      - name: Set up environment (if needed)
-	run: |
-	  sudo apt-get update
-	  sudo apt-get install -y make
-
-      - name: Run tests
-	run: |
-	  make clean && make test=1
-
-      - name: Check unit test results
-	id: check_test_result
-	run: |
-	  TEST_RESULT=$(cat unit_test)  # Read content from unit_test file
-	  echo "TEST_RESULT=$TEST_RESULT" >> $GITHUB_ENV  # Store result in environment variable
-
-      - name: Determine Badge Based on Test Result
-	run: |
-	  if [[ "$TEST_RESULT" == "1" ]]; then
-	    BADGE="![Test Status](https://img.shields.io/badge/Test%20Unit Tests-success-brightgreen)"
-	  elif [[ "$TEST_RESULT" == "0" ]]; then
-	    BADGE="![Test Status](https://img.shields.io/badge/Test%20Unit Tests-failure-red)"
-	  else
-	    BADGE="![Test Status](https://img.shields.io/badge/Test%20Unit Tests-unknown-lightgray)"
-	  fi
-
-	  # Update the README with the new badge
-	  sed -i "s|<!--BADGE_PLACEHOLDER-->|$BADGE|" README.md
-
-      - name: Commit and push changes to README
-	run: |
-	  git config user.name "github-actions"
-	  git config user.email "github-actions@users.noreply.github.com"
-	  git add README.md
-	  git commit -m "Update badge based on unit test result"
-	  git push
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Set up environment (if needed)
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y make
+    - name: Run tests
+      run: make clean && make test=1
+    - name: Check unit test results
+      id: check_test_result
+      run: |
+        TEST_RESULT=$(cat unit_test)  # Read content from unit_test file
+        echo "TEST_RESULT=$TEST_RESULT" >> $GITHUB_ENV  # Store result in environment variable
+    - name: Determine Badge Based on Test Result
+      run: |
+        if [[ "$TEST_RESULT" == "1" ]]; then
+        BADGE="![Test Status](https://img.shields.io/badge/Test%20Unit Tests-success-brightgreen)"
+        elif [[ "$TEST_RESULT" == "0" ]]; then
+        BADGE="![Test Status](https://img.shields.io/badge/Test%20Unit Tests-failure-red)"
+        else
+        BADGE="![Test Status](https://img.shields.io/badge/Test%20Unit Tests-unknown-lightgray)"
+        fi
+        # Update the README with the new badge
+        sed -i "s|<!--BADGE_PLACEHOLDER-->|$BADGE|" README.md
+    - name: Commit and push changes to README
+	  run: |
+        git config user.name "github-actions"
+        git config user.email "github-actions@users.noreply.github.com"
+        git add README.md
+        git commit -m "Update badge based on unit test result"
+        git push
