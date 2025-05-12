@@ -34,7 +34,7 @@ jobs:
         fi
         echo $BADGE
         # Update the README with the new badge
-        sed -i "s|<!--BADGE_PLACEHOLDER-->|$BADGE|" README.md
+        sed -i "3s/.*/${BADGE}/" README.md
     - name: Commit and push changes to README
       run: |
         if git diff --exit-code; then
