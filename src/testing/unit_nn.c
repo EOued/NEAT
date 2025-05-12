@@ -36,6 +36,7 @@ void nn_testing_init(void)
   t1.object       = nn1;
   t1.freeFunc     = freeCallback;
   t[0]            = t1;
+
   // Exec testing
   unit_testing(t, TEST_NUMBER);
   free(t);
