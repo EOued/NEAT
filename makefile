@@ -1,7 +1,8 @@
 CFILES = \
 	neural_network.c\
 	utils.c\
-	testing/unit_nn.c
+	testing/unit_nn.c\
+	testing/testing.c
 
 SRCDIR = src
 SOURCES = $(foreach file, $(CFILES), $(SRCDIR)/$(file))
@@ -23,6 +24,11 @@ ifeq ($(debug),1)
 FLAGS += -DDEBUG
 else
 FLAGS += -Werror
+endif
+
+test = 0
+ifeq ($(test),1)
+FLAGS += -DTEST
 endif
 
 

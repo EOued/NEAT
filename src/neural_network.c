@@ -1,5 +1,6 @@
 #include "neural_network.h"
 #include "macros.h"
+#include "testing.h"
 #include "utils.h"
 
 nn* createEmpty(unsigned int input_n, unsigned int output_n)
@@ -25,7 +26,8 @@ nn* createEmpty(unsigned int input_n, unsigned int output_n)
   network->layers[1].ids_c = next_power_of_two(output_n);
   MEMCHK(network->layers[1].ids =
              malloc(network->layers[1].ids_c * sizeof(unsigned int)));
-  for (unsigned int i = 0; i < output_n; i++) network->layers[1].ids[i] = input_n + i;
+  for (unsigned int i = 0; i < output_n; i++)
+    network->layers[1].ids[i] = input_n + i;
   network->layers[1].type = 1;
 
   return network;
@@ -75,6 +77,10 @@ void freeNN(nn* nn)
 
 int main(void)
 {
+#ifdef TEST
+  nn_testing_init();
+#endif
+
   nn* nn = createEmpty(3, 2);
   addConnection(nn, (connection){2, 3, 1});
   freeNN(nn);

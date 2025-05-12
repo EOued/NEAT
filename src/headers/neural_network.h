@@ -28,6 +28,6 @@ typedef struct {
 } nn;
 
 nn* createEmpty(unsigned int input_n, unsigned int output_n);
-
+void freeNN(nn* nn);
 
 #endif
