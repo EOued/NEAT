@@ -37,7 +37,7 @@ jobs:
         # Update the README with the new badge
         sed -i "s|<!--BADGE_PLACEHOLDER-->|$BADGE|" README.md
     - name: Commit and push changes to README
-	  run: |
+      run: |
         git config user.name "github-actions"
         git config user.email "github-actions@users.noreply.github.com"
         git add README.md
