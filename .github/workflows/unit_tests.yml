@@ -10,8 +10,6 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
     - name: Set up environment (if needed)
       run: |
         sudo apt-get update
@@ -49,5 +47,3 @@ jobs:
           git commit -m "Workflow Update"
           git push
         fi
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
