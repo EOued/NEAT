@@ -26,11 +26,11 @@ jobs:
     - name: Determine Badge Based on Test Result
       run: |
         if [[ "$TEST_RESULT" == "1" ]]; then
-        BADGE="![Test Status](https://img.shields.io/badge/Test%20Unit Tests-success-brightgreen)"
+        BADGE="![Test Status](https://img.shields.io/badge/Test%20Unit\ Tests-success-brightgreen)"
         elif [[ "$TEST_RESULT" == "0" ]]; then
-        BADGE="![Test Status](https://img.shields.io/badge/Test%20Unit Tests-failure-red)"
+        BADGE="![Test Status](https://img.shields.io/badge/Test%20Unit\ Tests-failure-red)"
         else
-        BADGE="![Test Status](https://img.shields.io/badge/Test%20Unit Tests-unknown-lightgray)"
+        BADGE="![Test Status](https://img.shields.io/badge/Test%20Unit\ Tests-unknown-lightgray)"
         fi
         echo $BADGE
         # Update the README with the new badge
