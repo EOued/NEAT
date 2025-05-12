@@ -36,8 +36,13 @@ jobs:
         sed -i "s|<!--BADGE_PLACEHOLDER-->|$BADGE|" README.md
     - name: Commit and push changes to README
       run: |
-        git config user.name "github-actions"
-        git config user.email "github-actions@users.noreply.github.com"
-        git add README.md
-        git commit -m "Update badge based on unit test result"
-        git push
+        if git diff --exit-code; then
+          echo "No changes to commit."
+          exit 0
+        else
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add -u
+          git commit -m "Workflow Update"
+          git push
+        fi
