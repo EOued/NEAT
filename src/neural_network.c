@@ -8,7 +8,7 @@ nn* createEmpty(unsigned int input_n, unsigned int output_n)
   MEMCHK(network = malloc(sizeof(nn)));
   network->connections   = 0;
   network->connections_n = 0;
-  network->connections_c = 2;
+  network->connections_c = 0;
 
   MEMCHK(network->layers = malloc(2 * sizeof(layer)));
   network->layers_n = 2;
@@ -25,7 +25,7 @@ nn* createEmpty(unsigned int input_n, unsigned int output_n)
   network->layers[1].ids_c = next_power_of_two(output_n);
   MEMCHK(network->layers[1].ids =
              malloc(network->layers[1].ids_c * sizeof(unsigned int)));
-  for (unsigned int i = 0; i < output_n; i++) network->layers[1].ids[i] = i;
+  for (unsigned int i = 0; i < output_n; i++) network->layers[1].ids[i] = input_n + i;
   network->layers[1].type = 1;
 
   return network;

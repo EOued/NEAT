@@ -6,7 +6,7 @@
 
 #define ERR(msg)                                                               \
   do {                                                                         \
-    fprintf(stderr, #msg);                                                          \
+    fprintf(stderr, #msg);                                                     \
     exit(1);                                                                   \
   } while (0)
 
@@ -24,7 +24,9 @@
   do {                                                                         \
     if (capacity < size)                                                       \
     {                                                                          \
-      capacity *= 2;                                                           \
+      if (!capacity) capacity = 2;                                             \
+      else                                                                     \
+        capacity *= 2;                                                         \
       MEMCHK(ptr = realloc(ptr, capacity * size_t));                           \
     }                                                                          \
   } while (0)
