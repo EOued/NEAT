@@ -32,6 +32,7 @@ jobs:
         else
         BADGE="![Test Status](https://img.shields.io/badge/Test%20Unit Tests-unknown-lightgray)"
         fi
+        echo $BADGE
         # Update the README with the new badge
         sed -i "s|<!--BADGE_PLACEHOLDER-->|$BADGE|" README.md
     - name: Commit and push changes to README
