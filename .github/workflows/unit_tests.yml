@@ -40,7 +40,7 @@ jobs:
         # Update the README with the new badge
         sed -i "3s|.*|${BADGE}|" README.md
     - name: Commit and push changes to README
-      continue-on-error: true  # Ensures this step runs even if prior steps fail
+      if: always()
       run: |
         if git diff --exit-code; then
           echo "No changes to commit."
