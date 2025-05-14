@@ -36,6 +36,8 @@ nn* createEmpty(unsigned int input_n, unsigned int output_n)
     network->layers[1].ids[i] = input_n + i;
   network->layers[1].type = 1;
 
+  network->nodes_n = input_n + output_n;
+
   return network;
 }
 
@@ -67,6 +69,22 @@ void addConnection(nn* nn, connection connection)
   return;
 }
 
+void printNN(nn* nn)
+{
+  if (!nn) return;
+  for (unsigned int connection = 0; connection < nn->connections_n;
+       connection++)
+  {
+    if (nn->connections[connection].enabled)
+      printf("[%d(%d)--%f-->%d(%d)] : %d\n", nn->connections[connection].input,
+             findLayer(nn, nn->connections[connection].input),
+             nn->connections[connection].weight,
+             nn->connections[connection].output,
+             findLayer(nn, nn->connections[connection].output),
+             nn->connections[connection].innov_number);
+  }
+}
+
 void freeNN(nn* nn)
 {
   if (!nn) return;
@@ -88,7 +106,14 @@ int main(void)
   nn_testing_init();
 #else
   nn* nn = createEmpty(3, 2);
-  addConnection(nn, (connection){2, 3, 1});
+  printNN(nn);
+  printf("\n");
+  addConnection(nn, (connection){0, 3, 1, 1, 1.0f});
+  printNN(nn);
+  printf("\n");
+  insertNode(nn, 0);
+  printNN(nn);
+  printf("\n");
   freeNN(nn);
 #endif
   return 0;

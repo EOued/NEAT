@@ -1,6 +1,7 @@
 CFILES = \
 	neural_network.c\
 	utils.c\
+	genotype.c\
 	testing/unit_nn.c\
 	testing/testing.c
 

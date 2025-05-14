@@ -55,7 +55,7 @@ void* random_connection(void* obj, void* args)
   MEMCHK(r = malloc(2 * sizeof(int)));
   r[0] = r1;
   r[1] = r2;
-  addConnection(network, (connection){r1, r2, 0});
+  addConnection(network, (connection){r1, r2, 0, 1, 1.0f});
   return r;
 }
 
