@@ -7,6 +7,8 @@ typedef struct {
   unsigned int input;
   unsigned int output;
   unsigned int innov_number;
+  unsigned int enabled;
+  double weight;
 } connection;
 
 typedef struct {
@@ -25,6 +27,8 @@ typedef struct {
   unsigned int connections_n;
   unsigned int connections_c;
   connection* connections;
+
+  unsigned int nodes_n;
 } nn;
 
 nn* createEmpty(unsigned int input_n, unsigned int output_n);
