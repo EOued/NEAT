@@ -14,6 +14,10 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y make
+    - name: Badge default value
+      run: |
+        BADGE="![Test Status](https://img.shields.io/badge/Unit_Tests-unknown-lightgray)"
+        sed -i "3s|.*|${BADGE}|" README.md
     - name: Compiling
       run: make clean && make test=1
     - name: Run tests
