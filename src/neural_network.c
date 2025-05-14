@@ -7,6 +7,10 @@
 
 nn* createEmpty(unsigned int input_n, unsigned int output_n)
 {
+
+  if (input_n == 0) ERR("Sensor layer size must be strictly positive");
+  if (output_n == 0) ERR("Output layer size must be strictly positive");
+
   nn* network;
   MEMCHK(network = malloc(sizeof(nn)));
   network->connections   = 0;
