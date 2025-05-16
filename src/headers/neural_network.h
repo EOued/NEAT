@@ -3,7 +3,8 @@
 
 #include <stdlib.h>
 
-typedef struct {
+typedef struct
+{
   unsigned int input;
   unsigned int output;
   unsigned int innov_number;
@@ -11,19 +12,21 @@ typedef struct {
   double weight;
 } connection;
 
-typedef struct {
-  unsigned int* ids; 
+typedef struct
+{
+  unsigned int* ids;
   unsigned int ids_n;
   unsigned int ids_c;
   // 0 : sensor, 1  : output, 2-n : hidden (i - 2);
   unsigned int type;
 } layer;
 
-typedef struct {
+typedef struct
+{
   layer* layers;
   unsigned int layers_n;
   unsigned int layers_c;
-  
+
   unsigned int connections_n;
   unsigned int connections_c;
   connection* connections;
@@ -40,5 +43,6 @@ void printNN(nn* nn);
 
 // Genotype
 void insertNode(nn* nn, unsigned int connectionIndex);
-
+void mutate(nn* nn, unsigned int mutationProbability,
+            unsigned int nodeInsertionProbability);
 #endif

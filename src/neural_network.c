@@ -61,7 +61,8 @@ void addConnection(nn* nn, connection connection)
   int inputLayer, outputLayer;
   ERRCHK(inputLayer = findLayer(nn, connection.input));
   ERRCHK(outputLayer = findLayer(nn, connection.output));
-  if (inputLayer >= outputLayer) ERR("inputLayer >= outputLayer");
+  if (outputLayer != 1 && inputLayer >= outputLayer)
+    ERR("inputLayer >= outputLayer");
 
   REALLOC(nn->connections_n, nn->connections_c, sizeof(connection),
           nn->connections);
@@ -112,6 +113,9 @@ int main(void)
   printNN(nn);
   printf("\n");
   insertNode(nn, 0);
+  printNN(nn);
+  printf("\n");
+  mutate(nn, 100, 0);
   printNN(nn);
   printf("\n");
   freeNN(nn);

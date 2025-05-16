@@ -56,3 +56,35 @@ void insertNode(nn* nn, unsigned int connectionIndex)
   addConnection(nn, (connection){newNode, output, 1, 1, weight});
   return;
 }
+
+void mutate(nn* nn, unsigned int mutationProbability,
+            unsigned int nodeInsertionProbability)
+{
+  if (mutationProbability > 100)
+    ERR("Mutation probability must be in rang 0, 100");
+  if (nodeInsertionProbability > 100)
+    ERR("Node insertion probability must be in range 0, 100");
+
+  if (!nn || (unsigned int)rand() % 100 > mutationProbability) return;
+  unsigned int mutation = rand() % 100;
+  if (mutation < nodeInsertionProbability)
+  {
+    insertNode(nn, rand() % nn->connections_n);
+    return;
+  }
+
+  // Add connection
+  unsigned int inputLayer = rand() % (nn->layers_n - 1);
+  if (inputLayer > 0) inputLayer++;
+  unsigned int outputLayer = inputLayer + rand() % (nn->layers_n - inputLayer);
+  if (inputLayer == outputLayer) outputLayer = 1;
+  printf("%d %d\n", inputLayer, outputLayer);
+
+  unsigned int inputNeuron  = rand() % (nn->layers[inputLayer].ids_n);
+  unsigned int outputNeuron = rand() % (nn->layers[outputLayer].ids_n);
+
+  double weight = ((double)rand() / (double)RAND_MAX) * 10.0;
+  addConnection(nn, (connection){inputNeuron, outputNeuron, nn->connections_n,
+                                 1, weight});
+  return;
+}
