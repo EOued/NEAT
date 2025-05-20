@@ -12,67 +12,63 @@ void insertNode(nn* nn, unsigned int connectionIndex)
   if (!nn) ERR("Given empty nn");
   if (connectionIndex >= nn->connections_n)
     ERR("Given connection does not exist");
+  if (!nn->connections[connectionIndex].enabled) return;
 
   // Let a, b be the layers of each node of the connection (with b > a)
   // if b-a > 1, then the layer of the inserted node is a random layer r such as
   // a < r < b Otherwise, we need to insert a new layer and propagate the
   // insertion
 
-  unsigned int input           = nn->connections[connectionIndex].input;
-  unsigned int output          = nn->connections[connectionIndex].output;
-  layer_descriptor inputLayer  = findLayer(nn, input);
-  layer_descriptor outputLayer = findLayer(nn, output);
+  unsigned int input  = nn->connections[connectionIndex].input;
+  unsigned int output = nn->connections[connectionIndex].output;
+  int inputLayer      = findLayer(nn, input);
+  int outputLayer     = findLayer(nn, output);
 
   unsigned int newLayer;
   unsigned int newLayerIndex;
-  int minRange;
-  int maxRange;
-  printf("layers %s %s\n", layer_str(inputLayer), layer_str(outputLayer));
+  int minRange = inputLayer + 1;
+  int maxRange = outputLayer - 1;
 
   // Not checking layer compatibility because this check is made at the creation
   // of a connection
-
-  if (inputLayer.layer_t == INPUT) minRange = 0;
-  else
-    minRange = inputLayer.id + 1;
-
-  if (outputLayer.layer_t == OUTPUT) maxRange = nn->layers_n - 2;
-  else
-    maxRange = outputLayer.id - 1;
-
-  printf("range %d %d\n", minRange, maxRange);
-  if (maxRange - minRange >= 0)
-  {
+  if (maxRange - minRange > 0)
     newLayer = minRange + rand() % (maxRange - minRange + 1);
-  }
   else
   {
-    REALLOC(nn->layers_n, nn->layers_c, sizeof(layer), nn->layers);
-    nn->layers[nn->layers_n++].descriptor =
-        (layer_descriptor){HIDDEN, nn->layers_n - 2};
+    // Creation of a new layer
+    newLayer = inputLayer + 1;
   }
 
+  // Updating old layers descriptor if current layer exists
   for (unsigned int i = 0; i < nn->layers_n; i++)
   {
-    printf("%d ? %d\n", nn->layers[i].descriptor.id, newLayer);
-    if (nn->layers[i].descriptor.layer_t == HIDDEN &&
-        nn->layers[i].descriptor.id == newLayer)
+    if (maxRange - minRange > 0 && nn->layers[i].descriptor == newLayer)
       newLayerIndex = i;
+    if (maxRange - minRange <= 0 && nn->layers[i].descriptor >= newLayer)
+      nn->layers[i].descriptor++;
+  }
+  if (maxRange - minRange <= 0)
+  {
+    REALLOC(nn->layers_n, nn->layers_c, sizeof(layer), nn->layers);
+    nn->layers[nn->layers_n].descriptor = newLayer;
+    nn->layers[nn->layers_n].ids        = 0;
+    nn->layers[nn->layers_n].ids_n      = 0;
+    nn->layers[nn->layers_n].ids_c      = 0;
+    newLayerIndex                       = nn->layers_n++;
   }
 
-  printf("uwu %d\n", nn->layers_n);
-  printf("new layer index %d\n", newLayerIndex);
   REALLOC(nn->layers[newLayerIndex].ids_n, nn->layers[newLayerIndex].ids_c,
           sizeof(unsigned int), nn->layers[newLayerIndex].ids);
   unsigned int newNode = nn->nodes_n++;
   nn->layers[newLayerIndex].ids[nn->layers[newLayerIndex].ids_n++] = newNode;
 
   // Modifiying connections
-
   nn->connections[connectionIndex].enabled = 0;
   double weight = nn->connections[connectionIndex].weight;
-  addConnection(nn, (connection){input, newNode, 1, 1, 1});
-  addConnection(nn, (connection){newNode, output, 1, 1, weight});
+  // TODO: ADDING CORRECT INNOV NUMBER
+  addConnection(nn, (connection){input, newNode, nn->connections_n, 1, 1});
+  addConnection(nn,
+                (connection){newNode, output, nn->connections_n, 1, weight});
   return;
 }
 
@@ -85,10 +81,14 @@ void mutate(nn* nn, unsigned int mutationProbability,
     ERR("Node insertion probability must be in range 0, 100");
 
   if (!nn || (unsigned int)rand() % 100 > mutationProbability) return;
-  unsigned int mutation = rand() % 100;
-  if (mutation < nodeInsertionProbability)
+  if (nodeInsertionProbability && rand() % 100 <= (int)nodeInsertionProbability)
   {
-    insertNode(nn, rand() % nn->connections_n);
+    int* indexes = malloc(nn->connections_n * sizeof(int));
+    int size     = 0;
+    for (unsigned int i = 0; i < nn->connections_n; i++)
+      if (nn->connections[i].enabled) indexes[size++] = i;
+    insertNode(nn, indexes[rand() % size]);
+    free(indexes);
     return;
   }
 

@@ -4,20 +4,6 @@
 #include <limits.h>
 #include <stdlib.h>
 
-enum type
-{
-  INPUT,
-  OUTPUT,
-  HIDDEN,
-  EMPTY
-};
-
-typedef struct
-{
-  enum type layer_t;
-  unsigned int id;
-} layer_descriptor;
-
 typedef struct
 {
   unsigned int input;
@@ -29,7 +15,7 @@ typedef struct
 
 typedef struct
 {
-  layer_descriptor descriptor;
+  unsigned int descriptor;
   unsigned int* ids;
   unsigned int ids_n;
   unsigned int ids_c;
@@ -51,10 +37,9 @@ typedef struct
 // Basic functions
 nn* createEmpty(unsigned int input_n, unsigned int output_n);
 void addConnection(nn* nn, connection connection);
-layer_descriptor findLayer(nn* nn, unsigned int node);
+int findLayer(nn* nn, unsigned int node);
 void freeNN(nn* nn);
 void printNN(nn* nn);
-char* layer_str(layer_descriptor lyr);
 
 // Genotype
 void insertNode(nn* nn, unsigned int connectionIndex);

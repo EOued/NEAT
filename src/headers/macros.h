@@ -15,11 +15,6 @@
     if ((op) == -1) ERR(op);                                                   \
   } while (0)
 
-#define LYRERRCHK(op)                                                          \
-  do {                                                                         \
-    if ((op).layer_t == EMPTY) ERR(op);                                        \
-  } while (0)
-
 #define MEMCHK(op)                                                             \
   do {                                                                         \
     if ((op) == NULL) ERR(op);                                                 \
