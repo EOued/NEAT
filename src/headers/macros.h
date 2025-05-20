@@ -15,6 +15,11 @@
     if ((op) == -1) ERR(op);                                                   \
   } while (0)
 
+#define LYRERRCHK(op)                                                          \
+  do {                                                                         \
+    if ((op).layer_t == EMPTY) ERR(op);                                        \
+  } while (0)
+
 #define MEMCHK(op)                                                             \
   do {                                                                         \
     if ((op) == NULL) ERR(op);                                                 \
@@ -36,16 +41,18 @@
                   preoperation_arg, testing_arg, free_func_arg,                \
                   testing_args_preop_output_arg)                               \
   do {                                                                         \
-    test_arg.test_s                    = test_s_arg;                               \
-    test_arg.object                    = object_arg;                               \
-    test_arg.preop_args                = preop_args_arg;                           \
-    test_arg.preop_freeing             = preop_freeing_arg;                        \
-    test_arg.testing_args              = testing_args_arg;                         \
-    test_arg.testing_freeing           = testing_freeing_arg;                      \
-    test_arg.preoperation              = preoperation_arg;                         \
-    test_arg.testing                   = testing_arg;                              \
-    test_arg.freeFunc                  = free_func_arg;                            \
-    test_arg.testing_args_preop_output = testing_args_preop_output_arg;            \
+    test_arg.test_s                    = test_s_arg;                           \
+    test_arg.object                    = object_arg;                           \
+    test_arg.preop_args                = preop_args_arg;                       \
+    test_arg.preop_freeing             = preop_freeing_arg;                    \
+    test_arg.testing_args              = testing_args_arg;                     \
+    test_arg.testing_freeing           = testing_freeing_arg;                  \
+    test_arg.preoperation              = preoperation_arg;                     \
+    test_arg.testing                   = testing_arg;                          \
+    test_arg.freeFunc                  = free_func_arg;                        \
+    test_arg.testing_args_preop_output = testing_args_preop_output_arg;        \
   } while (0)
+
+#define NULL_LD (layer_descriptor){EMPTY, 0}
 
 #endif

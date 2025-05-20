@@ -5,6 +5,11 @@
 
 #include <time.h>
 
+int layer_id(layer_descriptor l)
+{
+  return l.layer_t == INPUT ? -1 : (l.layer_t == OUTPUT ? INT_MAX : (int)l.id);
+}
+
 nn* createEmpty(unsigned int input_n, unsigned int output_n)
 {
 
@@ -26,7 +31,7 @@ nn* createEmpty(unsigned int input_n, unsigned int output_n)
   MEMCHK(network->layers[0].ids =
              malloc(network->layers[0].ids_c * sizeof(unsigned int)));
   for (unsigned int i = 0; i < input_n; i++) network->layers[0].ids[i] = i;
-  network->layers[0].type = 0;
+  network->layers[0].descriptor = (layer_descriptor){INPUT, 0};
 
   network->layers[1].ids_n = output_n;
   network->layers[1].ids_c = next_power_of_two(output_n);
@@ -34,23 +39,23 @@ nn* createEmpty(unsigned int input_n, unsigned int output_n)
              malloc(network->layers[1].ids_c * sizeof(unsigned int)));
   for (unsigned int i = 0; i < output_n; i++)
     network->layers[1].ids[i] = input_n + i;
-  network->layers[1].type = 1;
+  network->layers[1].descriptor = (layer_descriptor){OUTPUT, 0};
 
   network->nodes_n = input_n + output_n;
 
   return network;
 }
 
-int findLayer(nn* nn, unsigned int node)
+layer_descriptor findLayer(nn* nn, unsigned int node)
 {
   layer layer;
   for (unsigned int i = 0; i < nn->layers_n; i++)
   {
     layer = nn->layers[i];
     for (unsigned int j = 0; j < layer.ids_n; j++)
-      if (layer.ids[j] == node) return i;
+      if (layer.ids[j] == node) return layer.descriptor;
   }
-  return -1;
+  return NULL_LD;
 }
 
 void addConnection(nn* nn, connection connection)
@@ -58,10 +63,10 @@ void addConnection(nn* nn, connection connection)
   if (!nn) return;
 
   // Layer checking
-  int inputLayer, outputLayer;
-  ERRCHK(inputLayer = findLayer(nn, connection.input));
-  ERRCHK(outputLayer = findLayer(nn, connection.output));
-  if (outputLayer != 1 && inputLayer >= outputLayer)
+  layer_descriptor inputLayer, outputLayer;
+  LYRERRCHK(inputLayer = findLayer(nn, connection.input));
+  LYRERRCHK(outputLayer = findLayer(nn, connection.output));
+  if (layer_id(inputLayer) >= layer_id(outputLayer))
     ERR("inputLayer >= outputLayer");
 
   REALLOC(nn->connections_n, nn->connections_c, sizeof(connection),
@@ -70,18 +75,50 @@ void addConnection(nn* nn, connection connection)
   return;
 }
 
+char* layer_str(layer_descriptor lyr)
+{
+  if (lyr.layer_t == EMPTY) return "";
+  int id;
+  switch (id = layer_id(lyr))
+  {
+  case -1: return "INPUT";
+  case INT_MAX: return "OUTPUT";
+  default:
+  {
+    static char str[50];
+    sprintf(str, "%d", id);
+    return str;
+  }
+  }
+}
+
 void printNN(nn* nn)
 {
   if (!nn) return;
+  unsigned int inputLayerIndex, outputLayerIndex;
+  for (unsigned int i = 0; i < nn->layers_n; i++)
+  {
+    if (nn->layers[i].descriptor.layer_t == INPUT) inputLayerIndex = i;
+    if (nn->layers[i].descriptor.layer_t == OUTPUT) outputLayerIndex = i;
+  }
+  printf("Input nodes : ");
+  for (unsigned int i = 0; i < nn->layers[inputLayerIndex].ids_n; i++)
+    printf("%d ", nn->layers[inputLayerIndex].ids[i]);
+  printf("\nOutput nodes : ");
+  for (unsigned int i = 0; i < nn->layers[outputLayerIndex].ids_n; i++)
+    printf("%d ", nn->layers[outputLayerIndex].ids[i]);
+  printf("\nConnections:");
+
   for (unsigned int connection = 0; connection < nn->connections_n;
        connection++)
   {
     if (nn->connections[connection].enabled)
-      printf("[%d(%d)--%f-->%d(%d)] : %d\n", nn->connections[connection].input,
-             findLayer(nn, nn->connections[connection].input),
+      printf("\t[%d(%s)--%f-->%d(%s)] : %d\n",
+             nn->connections[connection].input,
+             layer_str(findLayer(nn, nn->connections[connection].input)),
              nn->connections[connection].weight,
              nn->connections[connection].output,
-             findLayer(nn, nn->connections[connection].output),
+             layer_str(findLayer(nn, nn->connections[connection].output)),
              nn->connections[connection].innov_number);
   }
 }
@@ -110,6 +147,9 @@ int main(void)
   printNN(nn);
   printf("\n");
   addConnection(nn, (connection){0, 3, 1, 1, 1.0f});
+  printNN(nn);
+  printf("\n");
+  insertNode(nn, 0);
   printNN(nn);
   printf("\n");
   insertNode(nn, 0);

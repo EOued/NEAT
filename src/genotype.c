@@ -18,35 +18,54 @@ void insertNode(nn* nn, unsigned int connectionIndex)
   // a < r < b Otherwise, we need to insert a new layer and propagate the
   // insertion
 
-  unsigned int input       = nn->connections[connectionIndex].input;
-  unsigned int output      = nn->connections[connectionIndex].output;
-  unsigned int inputLayer  = findLayer(nn, input);
-  unsigned int outputLayer = findLayer(nn, output);
+  unsigned int input           = nn->connections[connectionIndex].input;
+  unsigned int output          = nn->connections[connectionIndex].output;
+  layer_descriptor inputLayer  = findLayer(nn, input);
+  layer_descriptor outputLayer = findLayer(nn, output);
 
   unsigned int newLayer;
-  if (outputLayer - inputLayer > 1)
+  unsigned int newLayerIndex;
+  int minRange;
+  int maxRange;
+  printf("layers %s %s\n", layer_str(inputLayer), layer_str(outputLayer));
+
+  // Not checking layer compatibility because this check is made at the creation
+  // of a connection
+
+  if (inputLayer.layer_t == INPUT) minRange = 0;
+  else
+    minRange = inputLayer.id + 1;
+
+  if (outputLayer.layer_t == OUTPUT) maxRange = nn->layers_n - 2;
+  else
+    maxRange = outputLayer.id - 1;
+
+  printf("range %d %d\n", minRange, maxRange);
+  if (maxRange - minRange >= 0)
   {
-    newLayer = rand() % (outputLayer - inputLayer - 2) + inputLayer + 1;
+    newLayer = minRange + rand() % (maxRange - minRange + 1);
   }
   else
   {
-    newLayer = outputLayer;
-    REALLOC(nn->layers_n++, nn->layers_c, sizeof(layer), nn->layers);
-
-    for (int i = nn->layers_n - 1; i >= (int)outputLayer; i--)
-      memcpy(&nn->layers[i + 1], &nn->layers[i], sizeof(layer));
-
-    nn->layers[outputLayer].ids   = malloc(sizeof(unsigned int));
-    nn->layers[outputLayer].ids_n = 0;
-    nn->layers[outputLayer].ids_c = 1;
+    REALLOC(nn->layers_n, nn->layers_c, sizeof(layer), nn->layers);
+    nn->layers[nn->layers_n++].descriptor =
+        (layer_descriptor){HIDDEN, nn->layers_n - 2};
   }
 
-  // Adding node
+  for (unsigned int i = 0; i < nn->layers_n; i++)
+  {
+    printf("%d ? %d\n", nn->layers[i].descriptor.id, newLayer);
+    if (nn->layers[i].descriptor.layer_t == HIDDEN &&
+        nn->layers[i].descriptor.id == newLayer)
+      newLayerIndex = i;
+  }
 
-  REALLOC(nn->layers[newLayer].ids_n, nn->layers[newLayer].ids_c,
-          sizeof(unsigned int), nn->layers[newLayer].ids);
-  unsigned int newNode                                   = nn->nodes_n++;
-  nn->layers[newLayer].ids[nn->layers[newLayer].ids_n++] = newNode;
+  printf("uwu %d\n", nn->layers_n);
+  printf("new layer index %d\n", newLayerIndex);
+  REALLOC(nn->layers[newLayerIndex].ids_n, nn->layers[newLayerIndex].ids_c,
+          sizeof(unsigned int), nn->layers[newLayerIndex].ids);
+  unsigned int newNode = nn->nodes_n++;
+  nn->layers[newLayerIndex].ids[nn->layers[newLayerIndex].ids_n++] = newNode;
 
   // Modifiying connections
 

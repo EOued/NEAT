@@ -1,7 +1,22 @@
 #ifndef NEURAL_NETWORK
 #define NEURAL_NETWORK
 
+#include <limits.h>
 #include <stdlib.h>
+
+enum type
+{
+  INPUT,
+  OUTPUT,
+  HIDDEN,
+  EMPTY
+};
+
+typedef struct
+{
+  enum type layer_t;
+  unsigned int id;
+} layer_descriptor;
 
 typedef struct
 {
@@ -14,11 +29,10 @@ typedef struct
 
 typedef struct
 {
+  layer_descriptor descriptor;
   unsigned int* ids;
   unsigned int ids_n;
   unsigned int ids_c;
-  // 0 : sensor, 1  : output, 2-n : hidden (i - 2);
-  unsigned int type;
 } layer;
 
 typedef struct
@@ -37,9 +51,10 @@ typedef struct
 // Basic functions
 nn* createEmpty(unsigned int input_n, unsigned int output_n);
 void addConnection(nn* nn, connection connection);
-int findLayer(nn* nn, unsigned int node);
+layer_descriptor findLayer(nn* nn, unsigned int node);
 void freeNN(nn* nn);
 void printNN(nn* nn);
+char* layer_str(layer_descriptor lyr);
 
 // Genotype
 void insertNode(nn* nn, unsigned int connectionIndex);
