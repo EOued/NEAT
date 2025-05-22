@@ -1,5 +1,6 @@
 #include "macros.h"
 #include "neural_network.h"
+#include "utils.h"
 
 #include <string.h>
 
@@ -32,7 +33,7 @@ void insertNode(nn* nn, unsigned int connectionIndex)
   // Not checking layer compatibility because this check is made at the creation
   // of a connection
   if (maxRange - minRange > 0)
-    newLayer = minRange + rand() % (maxRange - minRange + 1);
+    newLayer = random_between_range(minRange, maxRange);
   else
   {
     // Creation of a new layer
@@ -80,9 +81,10 @@ void mutate(nn* nn, unsigned int mutationProbability,
   if (nodeInsertionProbability > 100)
     ERR("Node insertion probability must be in range 0, 100");
 
-  if (!nn || (unsigned int)rand() % 100 > mutationProbability) return;
-  if (nodeInsertionProbability && rand() % 100 <= (int)nodeInsertionProbability)
+  if (!nn || (unsigned int)rand() % 101 > mutationProbability) return;
+  if (rand() % 100 < (int)nodeInsertionProbability)
   {
+    if (!nn->connections_n) return;
     int* indexes = malloc(nn->connections_n * sizeof(int));
     int size     = 0;
     for (unsigned int i = 0; i < nn->connections_n; i++)
@@ -93,14 +95,14 @@ void mutate(nn* nn, unsigned int mutationProbability,
   }
 
   // Add connection
-  unsigned int inputLayer = rand() % (nn->layers_n - 1);
-  if (inputLayer > 0) inputLayer++;
-  unsigned int outputLayer = inputLayer + rand() % (nn->layers_n - inputLayer);
-  if (inputLayer == outputLayer) outputLayer = 1;
-  printf("%d %d\n", inputLayer, outputLayer);
+  unsigned int inputLayer = random_between_range(0, nn->layers_n - 2);
+  unsigned int outputLayer =
+      random_between_range(inputLayer + 1, nn->layers_n - 1);
 
-  unsigned int inputNeuron  = rand() % (nn->layers[inputLayer].ids_n);
-  unsigned int outputNeuron = rand() % (nn->layers[outputLayer].ids_n);
+  unsigned int inputNeuron =
+      nn->layers[inputLayer].ids[rand() % (nn->layers[inputLayer].ids_n)];
+  unsigned int outputNeuron =
+      nn->layers[outputLayer].ids[rand() % (nn->layers[outputLayer].ids_n)];
 
   double weight = ((double)rand() / (double)RAND_MAX) * 10.0;
   addConnection(nn, (connection){inputNeuron, outputNeuron, nn->connections_n,

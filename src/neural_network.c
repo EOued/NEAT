@@ -123,16 +123,10 @@ int main(void)
   nn_testing_init();
 #else
   nn* nn = createEmpty(3, 2);
-  printNN(nn);
-  printf("\n");
-
-  addConnection(nn, (connection){0, 3, 0, 1, 1.0f});
-  printNN(nn);
-  printf("\n");
 
   for (int _ = 0; _ < 2; _++)
   {
-    mutate(nn, 100, 100);
+    mutate(nn, 100, 50);
     printNN(nn);
     printf("\n");
   }

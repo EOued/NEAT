@@ -2,6 +2,7 @@
 
 #include <limits.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 unsigned int next_power_of_two(unsigned int x)
 {
@@ -11,3 +12,5 @@ unsigned int next_power_of_two(unsigned int x)
   for (unsigned int i = 1; i < sizeof(x) * CHAR_BIT; i <<= 1) x |= x >> i;
   return x + 1;
 }
+
+int random_between_range(int a, int b) { return a + rand() % (b - a + 1); }
