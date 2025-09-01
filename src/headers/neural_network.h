@@ -15,22 +15,32 @@ typedef struct
 
 typedef struct
 {
+  // UUID for identification
   unsigned int descriptor;
   unsigned int* ids;
+  // Numbers of IDs
   unsigned int ids_n;
+  // List capacity
   unsigned int ids_c;
 } layer;
 
 typedef struct
 {
+  // List of layers
   layer* layers;
+  // Number of layers
   unsigned int layers_n;
+  // List capacity
   unsigned int layers_c;
 
-  unsigned int connections_n;
-  unsigned int connections_c;
+  // List of connections
   connection* connections;
+  // Number of connections
+  unsigned int connections_n;
+  // List capacity
+  unsigned int connections_c;
 
+  // Total number of nodes
   unsigned int nodes_n;
 } nn;
 
